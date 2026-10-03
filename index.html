@@ -140,7 +140,7 @@ input[type="date"] {
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
 }
-.question { margin: 16px 0 0; max-width: 24ch; font-size: 21px; font-weight: 500; line-height: 1.3; }
+.question { margin: 16px 0 0; font-size: 21px; font-weight: 500; line-height: 1.3; }
 
 .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .choice {
@@ -151,6 +151,8 @@ input[type="date"] {
   font-size: 28px;
   font-weight: 800;
 }
+.choice.up { color: var(--up); }
+.choice.down { color: var(--down); }
 .choice[aria-pressed="true"].up { background: var(--up); border-color: var(--up); color: var(--on-color); }
 .choice[aria-pressed="true"].down { background: var(--down); border-color: var(--down); color: var(--on-color); }
 .nav { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px; }
@@ -307,7 +309,7 @@ input[type="date"] {
     $('count').textContent = (state.index + 1) + ' of ' + N;
     $('qdate').textContent = fmtDate(state.date);
     $('time').textContent = slot.time;
-    $('question').textContent = 'Prediction for S&P direction from ' + slot.time + ' on ' + fmtShort(state.date);
+    $('question').textContent = 'S&P 500 direction on ' + fmtShort(state.date);
     $('up').setAttribute('aria-pressed', String(a === 'Up'));
     $('down').setAttribute('aria-pressed', String(a === 'Down'));
     $('next').disabled = !a;
