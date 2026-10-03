@@ -3,6 +3,9 @@
 const SHEET_NAME = 'Form responses 1';  // the tab to add rows to
 const SECRET = 'change-me';             // must match "key" in config.js
 
+const EXTRA_HEADER = 'Market';   // header text for column C
+const EXTRA_VALUE = 'S&P 500';   // the hard-coded value for every new row
+
 const FIRST_SLOT_MIN = 7 * 60 + 30;     // 07:30
 const LAST_SLOT_MIN = 21 * 60;          // 21:00
 const STEP_MIN = 30;
@@ -11,6 +14,7 @@ function pad_(n) { return ('0' + n).slice(-2); }
 
 // Timestamp, Date, then "A 07:30", "B 08:00" ... "Z 20:00", "ZA 20:30", "ZB 21:00"
 function buildHeaders_() {
+  const headers = ['Timestamp', 'Date', EXTRA_HEADER];
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const headers = ['Timestamp', 'Date'];
   let i = 0;
@@ -58,7 +62,7 @@ function doPost(e) {
     const data = JSON.parse(e.postData.contents);
     if (data.key !== SECRET) return out_({ ok: false, error: 'bad key' });
 
-    const slotCount = buildHeaders_().length - 2;
+    const slotCount = buildHeaders_().length - 3;
     if (!Array.isArray(data.answers) || data.answers.length !== slotCount) {
       return out_({ ok: false, error: 'expected ' + slotCount + ' answers' });
     }
@@ -82,7 +86,7 @@ function doPost(e) {
     if (isNaN(stamp.getTime())) stamp = new Date();
     const day = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
 
-    sheet.appendRow([stamp, day].concat(data.answers));
+    sheet.appendRow([stamp, day, EXTRA_VALUE].concat(data.answers));
     const row = sheet.getLastRow();
     sheet.getRange(row, 1).setNumberFormat('dd/MM/yyyy HH:mm:ss');
     sheet.getRange(row, 2).setNumberFormat('dd/MM/yyyy');
