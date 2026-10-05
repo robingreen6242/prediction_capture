@@ -153,7 +153,7 @@ input[type="date"] {
 .choice.down { color: var(--down); }
 .choice[aria-pressed="true"].up { background: var(--up); border-color: var(--up); color: var(--on-color); }
 .choice[aria-pressed="true"].down { background: var(--down); border-color: var(--down); color: var(--on-color); }
-.nav { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; margin-top: 12px; }
+.nav { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-top: 12px; }
 
 /* Done */
 #done { flex: 1; flex-direction: column; justify-content: center; }
@@ -204,8 +204,8 @@ input[type="date"] {
       <button class="choice down" id="down" type="button" aria-pressed="false">Down</button>
     </div>
     <div class="nav">
-      <button class="btn ghost" id="back" type="button">Back</button>
       <button class="btn" id="next" type="button" disabled>Next</button>
+      <button class="btn ghost" id="back" type="button">Back</button>
     </div>
   </section>
 
