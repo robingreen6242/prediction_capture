@@ -244,6 +244,10 @@ input[type="date"] {
   }
   const N = slots.length;
 
+  // Random button order: one entry per slot, e.g. ['Up','Down'] or ['Down','Up'].
+  const randomOrder = () => (Math.random() < 0.5 ? ['Up', 'Down'] : ['Down', 'Up']);
+  const randomOrders = () => slots.map(randomOrder);
+
   const todayISO = () => { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
   const fmtDate = (iso) => {
     const [y, m, d] = iso.split('-').map(Number);
@@ -255,7 +259,7 @@ input[type="date"] {
   };
   const uid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
 
-  let state = null; // { date, answers[N], index }
+  let state = null; // { date, answers[N], order[N], index }
 
   function show(name) {
     ['start', 'quiz', 'done'].forEach((s) => { $(s).hidden = s !== name; });
@@ -284,7 +288,12 @@ input[type="date"] {
   }
 
   function startNew() {
-    state = { date: $('date').value || todayISO(), answers: new Array(N).fill(null), index: 0 };
+    state = {
+      date: $('date').value || todayISO(),
+      answers: new Array(N).fill(null),
+      order: randomOrders(),
+      index: 0
+    };
     persist();
     renderQuiz(false, 1);
     show('quiz');
@@ -298,6 +307,12 @@ input[type="date"] {
   }
 
   function renderQuiz(animate, dir) {
+    // Fix up drafts saved before button-order randomisation existed.
+    if (!Array.isArray(state.order) || state.order.length !== N) {
+      state.order = randomOrders();
+      persist();
+    }
+
     const slot = slots[state.index];
     const a = state.answers[state.index];
     $('count').textContent = (state.index + 1) + ' of ' + N;
@@ -306,6 +321,13 @@ input[type="date"] {
     $('question').textContent = 'S&P 500 direction on ' + fmtShort(state.date);
     $('up').setAttribute('aria-pressed', String(a === 'Up'));
     $('down').setAttribute('aria-pressed', String(a === 'Down'));
+
+    // Place the Up/Down buttons in this slot's random order.
+    const ord = state.order[state.index];
+    const wrap = $('up').parentNode;
+    wrap.appendChild($(ord[0].toLowerCase()));
+    wrap.appendChild($(ord[1].toLowerCase()));
+
     $('next').disabled = !a;
     $('next').textContent = state.index === N - 1 ? 'Submit' : 'Next';
     $('back').disabled = state.index === 0;
